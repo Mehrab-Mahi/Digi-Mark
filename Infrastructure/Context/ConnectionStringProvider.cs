@@ -1,9 +1,10 @@
 ﻿using Domain.Enums;
+using Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Context;
 
-public class ConnectionStringProvider
+public class ConnectionStringProvider : IConnectionStringProvider
 {
     private readonly IConfiguration _configuration;
 

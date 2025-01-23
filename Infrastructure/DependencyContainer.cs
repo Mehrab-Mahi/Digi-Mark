@@ -1,4 +1,6 @@
-﻿using Domain.Interfaces;
+﻿using Application.Interfaces;
+using Application.Services;
+using Domain.Interfaces;
 using Infrastructure.Context;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Http;
@@ -15,5 +17,6 @@ public class DependencyContainer
         services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
         services.AddScoped<IConnectionStringProvider, ConnectionStringProvider>();
         services.AddScoped<ISqlExecutor, NpgsqlExecutor>();
+        services.AddScoped<IAuthService, AuthService>();
     }
 }

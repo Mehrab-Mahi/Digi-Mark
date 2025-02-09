@@ -18,5 +18,6 @@ public class DependencyContainer
         services.AddScoped<IConnectionStringProvider, ConnectionStringProvider>();
         services.AddScoped<ISqlExecutor, NpgsqlExecutor>();
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IUserService, UserService>();
     }
 }

@@ -26,7 +26,7 @@ public class Startup
         {
             options.AddPolicy("AllowsAll", builder =>
             {
-                builder.AllowAnyOrigin().AllowAnyOrigin().AllowAnyHeader();
+                builder.AllowAnyOrigin().AllowAnyHeader();
             });
         });
 
@@ -64,6 +64,9 @@ public class Startup
                     ValidateIssuerSigningKey = true
                 };
             });
+
+        services.AddAuthorization();
+
         services.AddMvc(options => options.EnableEndpointRouting = false);
 
         services.AddEndpointsApiExplorer();
@@ -89,10 +92,11 @@ public class Startup
         app.UseStaticFiles();
         app.UseRouting();
         app.UseHttpsRedirection();
-        app.UseAuthorization();
-        app.UseCors(options => options.AllowAnyOrigin());
-        app.UseSession();
-        app.UseRouting();
+
+        app.UseCors(options => options.AllowAnyOrigin()); // ✅ Moved before authentication & session
+        app.UseSession(); // ✅ Moved before JWT middleware
+
+        // ✅ Custom JWT Middleware - After session
         app.Use(async (context, next) =>
         {
             var jwToken = context.Session.GetString("token");
@@ -103,6 +107,9 @@ public class Startup
 
             await next();
         });
+
+        app.UseAuthentication();
+        app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
         {

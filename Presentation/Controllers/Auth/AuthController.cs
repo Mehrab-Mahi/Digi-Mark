@@ -1,5 +1,5 @@
 ﻿using Application.Interfaces;
-using Domain.Models.Auth;
+using Domain.DTO.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,11 +11,10 @@ public class AuthController(IAuthService authService) : ControllerBase
 {
     private readonly IAuthService _authService = authService;
 
-    [AllowAnonymous]
     [HttpPost]
-    public ActionResult Login(LoginModel loginModel)
+    public ActionResult Login(LoginDto login)
     {
-        var response = _authService.Login(loginModel);
+        var response = _authService.Login(login);
         return Ok(new {data = response});
     }
 }

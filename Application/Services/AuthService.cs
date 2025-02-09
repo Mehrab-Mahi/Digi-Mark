@@ -1,14 +1,14 @@
-﻿using System.IdentityModel.Tokens.Jwt;
-using Application.Interfaces;
+﻿using Application.Interfaces;
+using Domain.DTO.Auth;
 using Domain.Entities;
 using Domain.Interfaces;
 using Domain.Models;
-using Domain.Models.Auth;
 using Domain.Models.Common;
 using Microsoft.Extensions.Options;
-using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
 
 namespace Application.Services
 {
@@ -24,15 +24,15 @@ namespace Application.Services
             _appSettings = appSettings.Value;
         }
 
-        public PayloadResponse Login(LoginModel loginModel)
+        public PayloadResponse Login(LoginDto loginDto)
         {
-            if (string.IsNullOrEmpty(loginModel.UserName) || string.IsNullOrEmpty(loginModel.Password))
+            if (string.IsNullOrEmpty(loginDto.UserName) || string.IsNullOrEmpty(loginDto.Password))
             {
-                return ReturnPayloadForEmptyValue(loginModel);
+                return ReturnPayloadForEmptyValue(loginDto);
             }
 
             var user = _userRepository
-                .GetConditional(u => u.UserName == loginModel.UserName)
+                .GetConditional(u => u.UserName == loginDto.UserName)
                 .FirstOrDefault();
 
             if (!IfUserExist(user))
@@ -41,7 +41,7 @@ namespace Application.Services
                 {
                     IsSuccess = false,
                     PayloadType = "Authentication",
-                    Message = $"User with '{loginModel.UserName}' username does not exist!"
+                    Message = $"User with '{loginDto.UserName}' username does not exist!"
                 };
             }
 
@@ -55,7 +55,7 @@ namespace Application.Services
                 };
             }
 
-            var isVerified = VerifyPassword(loginModel.Password, user.Password);
+            var isVerified = VerifyPassword(loginDto.Password, user.Password);
 
             if (!isVerified)
             {
@@ -110,7 +110,7 @@ namespace Application.Services
             return BCrypt.Net.BCrypt.Verify(loginModelPassword, userPassword);
         }
 
-        private static PayloadResponse ReturnPayloadForEmptyValue(LoginModel loginModel)
+        private static PayloadResponse ReturnPayloadForEmptyValue(LoginDto loginModel)
         {
             var message = string.Empty;
 
@@ -118,7 +118,7 @@ namespace Application.Services
             {
                 message = "Please input the username!";
             }
-            
+
             if (string.IsNullOrEmpty(loginModel.Password))
             {
                 message = "Please input the password!";

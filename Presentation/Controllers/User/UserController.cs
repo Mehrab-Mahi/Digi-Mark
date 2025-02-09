@@ -1,14 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Application.Interfaces;
+using Domain.DTO.User;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Presentation.Controllers.User;
 
 [ApiController]
 [Route("[controller]")]
-public class UserController : ControllerBase
+public class UserController(IUserService userService) : ControllerBase
 {
+    private readonly IUserService _userService = userService;
+
     [HttpPost]
-    public ActionResult SignUp()
+    public ActionResult SignUp(SignUpDto signUpDto)
     {
-        return Ok("okay");
+        var response = _userService.SignUp(signUpDto);
+        return Ok(new {data = response});
     }
 }
